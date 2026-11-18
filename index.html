@@ -1,92 +1,266 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b0f1e" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400..700&family=Atkinson+Hyperlegible+Next:wght@400..800&family=Doto:ROND,wght@0..100,500..900&display=swap"
     />
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"
-    ></script>
-    <title>Seu despertador infinito</title>
+    <title>Despertador Infinito</title>
   </head>
 
   <body>
-    <div id="app">
-      <h2 class="clock-header">Seu despertador infinito</h2>
-      <h1 class="js-clock">00:00</h1>
-      <form id="clock">
-        <div class="input-group mb-3">
-          <input
-            type="time"
-            name="time"
-            id="time"
-            value="00:00"
-            class="form-control"
-            placeholder="Horário"
-            aria-label="Horário"
-            aria-describedby="button-addon2"
-          />
-          <button
-            class="btn btn-outline-secondary"
-            type="submit"
-            id="button-addon2"
-          >
-            Definir alarme
-          </button>
+    <div id="app" class="app">
+      <header class="topbar">
+        <h1 class="brand">Despertador Infinito</h1>
+        <p class="tagline">O despertador que não aceita soneca.</p>
+      </header>
+
+      <div class="sound-gate-region" role="status">
+        <div id="sound-gate" class="sound-gate" hidden>
+          <span class="sound-gate__icon" aria-hidden="true">🔇</span>
+          <p class="sound-gate__text">
+            <strong>Toque em qualquer lugar para liberar o som do alarme.</strong>
+            O navegador deixa o alarme mudo até você tocar na página ou apertar uma tecla.
+          </p>
         </div>
-      </form>
-      <div class="alarm-clock-list hide"></div>
+      </div>
 
-      <!-- Button trigger modal -->
-      <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#question">
-      Teste
-    </button> -->
+      <main class="layout">
+        <section class="face" aria-label="Hora atual">
+          <div class="led">
+            <time id="clock" class="led__time" data-tick="on">
+              <span class="led__main" data-ghost="88 88"
+                ><span id="clock-hours">--</span
+                ><span class="led-colon"><span class="visually-hidden">:</span></span
+                ><span id="clock-minutes">--</span></span
+              >
+              <span class="led__seconds" data-ghost="88"
+                ><span id="clock-seconds">--</span></span
+              >
+            </time>
+            <p id="clock-date" class="led__date"></p>
+          </div>
 
-      <!-- Modal -->
-      <div
-        class="modal fade"
-        id="question"
-        tabindex="-1"
-        aria-labelledby="questionLabel"
-        aria-hidden="true"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-      >
-        <form id="formQuestion">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="questionLabel">Modal title</h1>
-              </div>
-              <div class="modal-body">
-                <div class="mb-3">
-                  <label for="answer" class="form-label">Resposta</label>
-                  <textarea
-                    class="form-control"
-                    name="answer"
-                    id="answer"
-                    rows="3"
-                  ></textarea>
+          <p class="rule">
+            <span class="rule__icon" aria-hidden="true">!</span>
+            <span>
+              <strong>Para desligar: resolva 3 captchas, acerte 10 perguntas e digite a frase final.</strong>
+              3 erros trocam a pergunta. Sem soneca, sem silenciar, sem fechar a tela.
+            </span>
+          </p>
+        </section>
+
+        <section class="alarms" aria-labelledby="alarms-title">
+          <form id="alarm-form" class="alarm-form" novalidate>
+            <label for="alarm-time" class="field-label">Novo alarme</label>
+            <div class="alarm-form__row">
+              <input id="alarm-time" class="time-input" type="time" name="time" />
+              <button id="alarm-submit" class="btn btn--primary" type="submit">
+                Adicionar alarme
+              </button>
+            </div>
+            <div class="quick" role="group" aria-labelledby="quick-label">
+              <span id="quick-label" class="quick__label">Testar já:</span>
+              <button type="button" class="chip" data-quick-minutes="1">+1 min</button>
+              <button type="button" class="chip" data-quick-minutes="5">+5 min</button>
+            </div>
+          </form>
+
+          <div class="alarms__head">
+            <h2 id="alarms-title">Alarmes</h2>
+            <span id="alarms-count" class="alarms__count"></span>
+          </div>
+          <p id="alarms-locked" class="alarms__locked" hidden>
+            Alarme tocando: a lista fica travada até você acertar 10.
+          </p>
+          <p id="alarms-empty" class="empty">
+            <strong>Nenhum alarme armado.</strong>
+            Escolha um horário acima. Com coragem, use o +1 min.
+          </p>
+          <ul id="alarm-list" class="alarm-list" hidden></ul>
+        </section>
+      </main>
+    </div>
+
+    <div
+      id="challenge"
+      class="challenge"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="challenge-title"
+      aria-describedby="challenge-rule"
+      tabindex="-1"
+      data-state="ringing"
+      data-level="0"
+      hidden
+    >
+      <div class="challenge__glow" aria-hidden="true"></div>
+      <div class="challenge__flash" aria-hidden="true"></div>
+
+      <div id="challenge-scroll" class="challenge__scroll">
+        <div id="challenge-quake" class="challenge__quake">
+          <div id="challenge-card" class="challenge__card">
+            <header class="challenge__header">
+              <h2 id="challenge-title" class="challenge__title">
+                <span id="challenge-icon" class="challenge__icon" aria-hidden="true">⏰</span>
+                <span id="challenge-title-text">ACORDA!</span>
+              </h2>
+              <p class="challenge__now">
+                <span class="visually-hidden">Agora são </span>
+                <span id="challenge-clock-hours">--</span
+                ><span class="led-colon"><span class="visually-hidden">:</span></span
+                ><span id="challenge-clock-minutes">--</span>
+              </p>
+            </header>
+            <ol id="steps" class="steps" aria-label="Etapas para desligar" hidden>
+              <li class="step" data-step="captcha" data-state="pending">
+                <span class="step__marker" aria-hidden="true">1</span>
+                <span class="step__body">
+                  <span class="step__label">Captchas</span>
+                  <span class="step__count"></span>
+                </span>
+                <span class="visually-hidden" data-slot="state"></span>
+              </li>
+              <li class="step" data-step="questions" data-state="pending">
+                <span class="step__marker" aria-hidden="true">2</span>
+                <span class="step__body">
+                  <span class="step__label">Perguntas</span>
+                  <span class="step__count"></span>
+                </span>
+                <span class="visually-hidden" data-slot="state"></span>
+              </li>
+              <li class="step" data-step="phrase" data-state="pending">
+                <span class="step__marker" aria-hidden="true">3</span>
+                <span class="step__body">
+                  <span class="step__label">Frase</span>
+                  <span class="step__count"></span>
+                </span>
+                <span class="visually-hidden" data-slot="state"></span>
+              </li>
+            </ol>
+            <p id="challenge-rule" class="visually-hidden">
+              Para desligar: resolva 3 captchas, acerte 10 perguntas e digite a frase final. Esta tela não pode ser fechada.
+            </p>
+
+            <div id="challenge-meters" class="challenge__meters">
+              <div class="meter">
+                <div class="meter__head">
+                  <span id="progress-label">Acertos</span>
+                  <span id="progress-value" class="meter__value">0/10</span>
                 </div>
+                <div
+                  id="progress"
+                  class="segments"
+                  role="progressbar"
+                  aria-labelledby="progress-label"
+                  aria-valuemin="0"
+                  aria-valuemax="10"
+                  aria-valuenow="0"
+                ></div>
               </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">
-                  Save changes
-                </button>
+              <div id="lives-box" class="lives">
+                <span id="lives" class="lives__hearts" aria-hidden="true"></span>
+                <span id="attempt-text" class="lives__text"></span>
               </div>
             </div>
+
+            <div class="challenge__stage">
+              <div id="challenge-loading" class="loading">
+                <span class="spinner" aria-hidden="true"></span>
+                <p id="challenge-loading-text" class="loading__text">Carregando…</p>
+              </div>
+              <div id="challenge-question" class="question" hidden>
+                <p id="question-eyebrow" class="question__eyebrow" hidden>Última etapa · frase final</p>
+                <p id="question-text" class="question__text"></p>
+                <p id="question-hint" class="question__hint"></p>
+              </div>
+              <div id="challenge-puzzle" class="puzzle" hidden>
+                <p id="puzzle-instruction" class="puzzle__instruction"></p>
+                <div id="puzzle-body" class="puzzle__body"></div>
+                <p id="puzzle-note" class="puzzle__note" aria-live="polite"></p>
+              </div>
+              <div id="challenge-victory" class="victory" hidden>
+                <p id="victory-title" class="victory__title" tabindex="-1">Alarme desligado.</p>
+                <p class="victory__text">Bom dia! ☀️ Você venceu o despertador. Por hoje.</p>
+              </div>
+            </div>
+
+            <form id="answer-form" class="answer" novalidate autocomplete="off">
+              <label id="answer-label" for="answer-input" class="answer__label">Sua resposta</label>
+              <div class="answer__row">
+                <input
+                  id="answer-input"
+                  class="answer__input"
+                  type="text"
+                  name="answer"
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  enterkeyhint="send"
+                  aria-describedby="question-text question-hint paste-warning"
+                />
+                <button id="answer-submit" class="btn btn--alarm" type="submit">
+                  <span class="spinner spinner--sm" aria-hidden="true"></span>
+                  <span id="answer-submit-label">Responder</span>
+                </button>
+              </div>
+              <p id="paste-warning" class="answer__warning" aria-live="polite"></p>
+            </form>
+
+            <p id="feedback" class="feedback" aria-live="assertive" aria-atomic="true"></p>
+            <p id="challenge-status" class="visually-hidden" role="status" aria-live="polite"></p>
           </div>
-        </form>
+        </div>
+      </div>
+
+      <div id="audio-blocked" class="audio-blocked" hidden>
+        <div class="audio-blocked__card" role="alert">
+          <p class="audio-blocked__icon" aria-hidden="true">🔇</p>
+          <p class="audio-blocked__title">O navegador bloqueou o som.</p>
+          <p class="audio-blocked__text">Toque em qualquer lugar para continuar.</p>
+        </div>
       </div>
     </div>
+
+    <template id="alarm-row-template">
+      <li class="alarm" data-enabled="true">
+        <span class="alarm__time"
+          ><span data-slot="hours"></span
+          ><span class="led-colon" data-slot="colon"><span class="visually-hidden">:</span></span
+          ><span data-slot="minutes"></span
+        ></span>
+        <span class="alarm__label" data-slot="label"></span>
+        <button type="button" class="switch" role="switch" aria-checked="true" data-action="toggle">
+          <span class="switch__thumb" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="icon-btn" data-action="delete">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </li>
+    </template>
+
+    <template id="heart-template">
+      <span class="heart" data-state="full">
+        <svg viewBox="0 0 7 6" aria-hidden="true" focusable="false">
+          <circle cx="1.5" cy="0.5" r="0.42" /><circle cx="2.5" cy="0.5" r="0.42" /><circle cx="4.5" cy="0.5" r="0.42" /><circle cx="5.5" cy="0.5" r="0.42" />
+          <circle cx="0.5" cy="1.5" r="0.42" /><circle cx="1.5" cy="1.5" r="0.42" /><circle cx="2.5" cy="1.5" r="0.42" /><circle cx="3.5" cy="1.5" r="0.42" /><circle cx="4.5" cy="1.5" r="0.42" /><circle cx="5.5" cy="1.5" r="0.42" /><circle cx="6.5" cy="1.5" r="0.42" />
+          <circle cx="0.5" cy="2.5" r="0.42" /><circle cx="1.5" cy="2.5" r="0.42" /><circle cx="2.5" cy="2.5" r="0.42" /><circle cx="3.5" cy="2.5" r="0.42" /><circle cx="4.5" cy="2.5" r="0.42" /><circle cx="5.5" cy="2.5" r="0.42" /><circle cx="6.5" cy="2.5" r="0.42" />
+          <circle cx="1.5" cy="3.5" r="0.42" /><circle cx="2.5" cy="3.5" r="0.42" /><circle cx="3.5" cy="3.5" r="0.42" /><circle cx="4.5" cy="3.5" r="0.42" /><circle cx="5.5" cy="3.5" r="0.42" />
+          <circle cx="2.5" cy="4.5" r="0.42" /><circle cx="3.5" cy="4.5" r="0.42" /><circle cx="4.5" cy="4.5" r="0.42" />
+          <circle cx="3.5" cy="5.5" r="0.42" />
+        </svg>
+      </span>
+    </template>
 
     <script type="module" src="/src/main.ts"></script>
   </body>
