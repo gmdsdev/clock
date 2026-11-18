@@ -7,6 +7,12 @@ const step = {
   question: "",
 };
 
+const questions = [
+  "Escolha uma pessoa aleatória e famosa no Brasil e pergunte em que ano ela nasceu",
+  "Escolha um produto da Apple de forma aleatória e pergunte o valor do produto na época de seu lançamento",
+  "Escolha uma capital do Brasil e pergunte quantos habitantes a cidade possui",
+];
+
 window.onload = () => {
   const formClock = document.querySelector("#clock");
   const formQuestion = document.querySelector("#formQuestion");
