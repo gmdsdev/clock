@@ -3,8 +3,8 @@ import "./style.css";
 
 const step = {
   prompt:
-    "Escolha uma pessoa muito famosa no Brasil e pergunte em que ano ela nasceu",
-  expected: "",
+    "Escolha uma pessoa aleatória e famosa no Brasil e pergunte em que ano ela nasceu",
+  question: "",
 };
 
 window.onload = () => {
@@ -38,13 +38,13 @@ window.onload = () => {
       clearInterval(timer);
 
       const data = await generateQuestion(step.prompt);
-      step.expected = data.text;
+      step.question = data.text;
 
       const exp: HTMLHeadElement | null =
         document.querySelector("#question h2");
 
       if (exp) {
-        exp.innerHTML = step.expected;
+        exp.innerHTML = step.question;
       }
     }
   };
@@ -67,7 +67,7 @@ window.onload = () => {
       return;
     }
 
-    const a = await checkAnswer(step.expected, answer.value);
+    const a = await checkAnswer(step.question, answer.value);
 
     console.log(a);
   });

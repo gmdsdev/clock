@@ -20,6 +20,7 @@ export const generateQuestion = async (prompt: string) => {
   const response = await client.responses.create({
     model: "gpt-5.2",
     input: "Gere a questão",
+    prompt_cache_key: String(new Date().toUTCString()),
     instructions: `
     ${prompt}
     O retorno deve conter apenas o dado dentro do campo \`text\` e o status como "question".
@@ -30,13 +31,15 @@ export const generateQuestion = async (prompt: string) => {
   return JSON.parse(response.output_text) as GPTResponse;
 };
 
-export const checkAnswer = async (expected: string, input: string) => {
+export const checkAnswer = async (question: string, input: string) => {
   const response = await client.responses.create({
     model: "gpt-5.2",
-    input,
+    input: `
+    Pergunta: ${question}
+    Resposta: ${input}
+    `,
     instructions: `
-    Data o seguinte valor: ${expected}, verifique se o input bate com o valor.
-    No campo text, informe apenas: "Acertou" ou "Errou".
+    No campo text, informe apenas: "Acertou" ou "Errou" baseado no instrução acima.
     Utilize o seguinte padrão para resposta, porém, em formato JSON:
     ${expectedReponse}`,
   });
