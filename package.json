@@ -13,6 +13,7 @@
     "vite": "^8.3.6"
   },
   "dependencies": {
+    "openai": "^7.59.0",
     "resend": "^6.38.1"
   }
 }
