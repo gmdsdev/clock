@@ -9,8 +9,9 @@ const step = {
 
 window.onload = () => {
   const formClock = document.querySelector("#clock");
-  const formQuetion = document.querySelector("#question");
+  const formQuestion = document.querySelector("#formQuestion");
   const input = document.querySelector("input");
+  const questionModal = new bootstrap.Modal("#question", {});
 
   let timer: number;
 
@@ -40,11 +41,13 @@ window.onload = () => {
       const data = await generateQuestion(step.prompt);
       step.question = data.text;
 
-      const exp: HTMLHeadElement | null =
-        document.querySelector("#question h2");
+      (questionModal as any)?.show();
 
-      if (exp) {
-        exp.innerHTML = step.question;
+      const questionLabel: HTMLHeadElement | null =
+        document.querySelector("#questionLabel");
+
+      if (questionLabel) {
+        questionLabel.innerHTML = step.question;
       }
     }
   };
@@ -53,22 +56,50 @@ window.onload = () => {
     e.preventDefault();
 
     clearInterval(timer);
+    setClockList();
 
     timer = setInterval(tick, 1000);
   });
 
-  formQuetion?.addEventListener("submit", async (e) => {
+  formQuestion?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const answer: HTMLInputElement | null =
-      document.querySelector("#question input");
+    const answer: HTMLTextAreaElement | null =
+      formQuestion.querySelector("textarea");
 
     if (!answer?.value) {
       return;
     }
 
-    const a = await checkAnswer(step.question, answer.value);
+    const { status } = await checkAnswer(step.question, answer.value);
 
-    console.log(a);
+    if (status === "incorrect") {
+      alert("Incorreto");
+    } else {
+      alert("Correto");
+    }
   });
+
+  function setClockList() {
+    const [hour, minute] = input?.value.split(":") as String[];
+    const alartmClockList = document.querySelector(".alarm-clock-list");
+    alartmClockList!.innerHTML += `<div>${hour}:${minute}</div>`;
+    alartmClockList?.classList.remove("hide");
+  }
+
+  function setTime() {
+    const clockHeader = document.querySelector(".js-clock");
+    if (clockHeader) {
+      const horaAtual = new Date().toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      clockHeader.innerHTML = horaAtual;
+    }
+  }
+
+  setTime();
+  setTimeout(() => {
+    setTime();
+  }, 1000);
 };

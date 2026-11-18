@@ -16,11 +16,22 @@ body {
     "Open Sans",
     "Helvetica Neue",
     sans-serif;
-  margin: 0;
+  margin: auto;
   padding: 0;
+  display: flex;
 }
 
 input {
   background-color: transparent;
   border: 1px solid #ccc;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hide { 
+  display: none;
 }
